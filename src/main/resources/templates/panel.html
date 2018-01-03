@@ -1,20 +1,131 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>XCloud</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link th:href="@{~/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{~/css/dashboard.css}" rel="stylesheet"/>
 </head>
 <body>
-<h1>Панель управления</h1>
-<form method="POST" enctype="multipart/form-data" action="/panel">
-    File to upload:
-    <input type="file" name="file"/><br/>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" th:href="@{~/panel}">XCloud</a>
+        <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse"
+                data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <input type="submit" value="Upload"/><br/>
-    Press here to upload the file!<br/><br/>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Settings</a>
+                </li>
 
-    <p th:text="${answer}"/>
-</form>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search"/>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav ml-4">
+                <li class="nav-item active">
+                    <a class="nav-link" th:text="${User.getUsername()}"/>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">profile</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Файлы</a>
+                </li>
+                <ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Export</a>
+                    </li>
+                </ul>
+
+            </ul>
+        </nav>
+
+        <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+            <section class="row text-center placeholders">
+                <div class="col-12 col-sm-12 placeholder createCategory">
+                    <form th:action="@{~/panel/newCategory}" method="post">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-3">
+                                    <h4 class="mt-1 text-left">Создать раздел:</h4>
+                                </div>
+                                <div class="col-7">
+                                    <input type="text"
+                                           name="newCategory"
+                                           placeholder="Название категории"
+                                           class="form-control"
+                                    />
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-outline-success btn-block"
+                                            type="submit">Создать
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>Категории</h1>
+                    </div>
+
+                    <div class="table-responsive col-12">
+                        <table class="table table-hover">
+                            <!--<thead>-->
+                            <!--<tr>-->
+                            <!--<th>Name</th>-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+                            <tbody th:each="cat : ${Category}">
+                            <tr>
+                                <td class="col-6" th:text="${cat.getCategoryName()}"></td>
+                                <td class="mr-2">
+                                    <a th:href="@{'~/panel/category/'+${cat.getId()}}" th:alt="${cat.categoryName}">Открыть</a>
+                                </td>
+                                <td class="mr-0">
+                                    <a th:href="@{'~/panel/category/delete/'+${cat.getId()}}" th:alt="${cat.categoryName}">Удалить</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!--<ul class="" th:each="person : ${Category}">-->
+                        <!--<li th:text="${person.getCategoryName()}"></li>-->
+                        <!--</ul>-->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
 </body>
 </html>
