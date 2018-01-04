@@ -14,11 +14,14 @@ import pro.xway.xcloud.dao.UsersRepository;
 import pro.xway.xcloud.model.Category;
 import pro.xway.xcloud.model.UserXCloud;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping(value = "/panel")
 public class Panel {
+    public static final String ERROR = "Error";
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
@@ -32,7 +35,7 @@ public class Panel {
 
     @RequestMapping(value = "/category/{id}")
     @ResponseBody
-    public String openCategory(@PathVariable String id, Model model){
+    public String openCategory(@PathVariable String id, Model model) {
 
         loadPanel(model);
 //        return "panel";
@@ -40,13 +43,13 @@ public class Panel {
     }
 
     @RequestMapping(value = "/category/delete/{id}")
-    public String deleteCategory(@PathVariable String id, Model model){
+    public String deleteCategory(@PathVariable String id, Model model) {
         try {
             Long idCat = Long.parseLong(id);
             categoryRepository.delete(idCat);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            model.addAttribute("Error", "Delete a category is impossible");
+            model.addAttribute(ERROR, "Delete a category is impossible");
         }
 
         loadPanel(model);
@@ -54,16 +57,20 @@ public class Panel {
     }
 
     @RequestMapping(value = "/newCategory", method = RequestMethod.POST)
-    public String newCategory(Model model, String newCategory){
-        Category category = new Category(newCategory, 0L, getCurrentUserId());
-        categoryRepository.save(category);
+    public String newCategory(Model model, @NotNull String newCategory) {
+        if (!newCategory.equals("")) {
+            Category category = new Category(newCategory, 0L, getCurrentUserId());
+            categoryRepository.save(category);
+        } else model.addAttribute(ERROR, "Enter the name of the category");
         loadPanel(model);
         return "panel";
     }
 
     private void loadPanel(Model model) {
+        List<Category> category = getCategory();
         model.addAttribute("User", getCurrentUser());
-        model.addAttribute("Category", getCategory());
+        model.addAttribute("Category", category);
+        model.addAttribute("MainCategory", getMainCategory(category));
     }
 
     public User getCurrentUser() {
@@ -71,7 +78,7 @@ public class Panel {
         return name;
     }
 
-    public Long getCurrentUserId(){
+    public Long getCurrentUserId() {
         UserXCloud userXCloud = usersRepository.findByUsername(getCurrentUser().getUsername());
         return userXCloud.getId();
     }
@@ -79,5 +86,13 @@ public class Panel {
     public List<Category> getCategory() {
         List<Category> category = categoryRepository.findByUserId(getCurrentUserId());
         return category;
+    }
+
+    private List<Category> getMainCategory(List<Category> category) {
+        List<Category> list = new ArrayList<>();
+        for (Category cat : category) {
+            if (cat.getParent() == 0) list.add(cat);
+        }
+        return list;
     }
 }

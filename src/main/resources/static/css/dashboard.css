@@ -67,3 +67,18 @@ h1 {
     background: aliceblue;
     padding: 15px;
 }
+
+.errorMsg{
+    background: indianred;
+    padding-top: 16px;
+    color: white;
+}
+
+.secondSidebarMenu{
+    padding-left: 30px;
+    list-style-type: disc;
+}
+
+.secondSidebarMenu .nav-link{
+    padding-left: 0px;
+}

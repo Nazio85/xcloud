@@ -50,23 +50,19 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="#">Файлы</a>
                 </li>
-                <ul>
+                <ul class="secondSidebarMenu" th:each="mainCat : ${MainCategory}">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Reports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Analytics</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Export</a>
+                        <a class="nav-link"
+                           th:href="@{'~/panel/category/'+${mainCat.getId()}}"
+                           th:alt="${mainCat.categoryName}"
+                           th:text="${mainCat.categoryName}"></a>
                     </li>
                 </ul>
-
             </ul>
         </nav>
 
         <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
-            <section class="row text-center placeholders">
+            <section class="row text-center placeholders pb-3">
                 <div class="col-12 col-sm-12 placeholder createCategory">
                     <form th:action="@{~/panel/newCategory}" method="post">
                         <div class="container">
@@ -89,6 +85,12 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </section>
+
+            <section class="row text-center placeholder">
+                <div th:if="${Error != null}" class="col-12 col-sm-12 placeholder errorMsg mb-3">
+                    <p th:text="${Error}"></p>
                 </div>
             </section>
 
