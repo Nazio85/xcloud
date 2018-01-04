@@ -82,3 +82,12 @@ h1 {
 .secondSidebarMenu .nav-link{
     padding-left: 0px;
 }
+
+.breadCrumbs{
+    background: ghostwhite;
+}
+
+.breadCrumbs > li{
+    display: initial;
+    color: #808080;
+}
