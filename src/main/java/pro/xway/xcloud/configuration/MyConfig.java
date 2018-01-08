@@ -17,6 +17,7 @@ import pro.xway.xcloud.services.MyUserService;
 public class MyConfig extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
         http
                 .authorizeRequests()
                 .antMatchers( "/","/css/*", "/img/**", "/js/*").permitAll()

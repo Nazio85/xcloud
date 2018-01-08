@@ -17,6 +17,7 @@ target/
 *.properties
 
 ### NetBeans ###
+storage/*
 nbproject/private/
 build/
 nbbuild/

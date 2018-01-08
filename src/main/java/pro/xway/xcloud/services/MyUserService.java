@@ -56,13 +56,15 @@ public class MyUserService implements UserDetailsService {
             roleRepository.save(role);
         }
 
-        UserXCloud user = userDao.findByUsername(USER);
+        UserXCloud user = userDao.findByUsername(ADMIN);
 
         if (user == null) {
             HashSet<Role> roles = new HashSet<>();
             roles.add(role);
             String pas = passwordEncoder.encode("123");
             user = new UserXCloud(roles, "123", USER);
+            userDao.save(user);
+            user = new UserXCloud(roles,pas,ADMIN);
             userDao.save(user);
         }
 

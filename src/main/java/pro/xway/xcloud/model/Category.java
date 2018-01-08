@@ -2,6 +2,7 @@ package pro.xway.xcloud.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
