@@ -1,6 +1,7 @@
 package pro.xway.xcloud.controler;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
+
+//import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -126,7 +127,8 @@ public class Panel {
 
         httpResponse.setContentType(mimeType);
         httpResponse.setHeader("Content-Disposition",
-                "filename=\"" + MimeUtility.encodeWord(fileName, "utf-8", "Q") + "\"");
+//                "filename=\"" + MimeUtility.encodeWord(fileName, "utf-8", "Q") + "\"");
+                fileName);
 
         return outputStream -> {
             int nRead;
