@@ -2,6 +2,7 @@ package pro.xway.xcloud.controler;
 
 
 //import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,14 @@ import pro.xway.xcloud.model.UserXCloud;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.*;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +82,7 @@ public class Panel {
     public String deleteFile(@PathVariable String currentId, @PathVariable String id, Model model) {
         Long idFile = parseId(id);
         File file = getFileForBD(fileRepository.findOne(idFile));
-        if (file.delete()){
+        if (file.delete()) {
             fileRepository.delete(idFile);
         }
 
@@ -128,13 +137,13 @@ public class Panel {
         httpResponse.setContentType(mimeType);
         httpResponse.setHeader("Content-Disposition",
 //                "filename=\"" + MimeUtility.encodeWord(fileName, "utf-8", "Q") + "\"");
-                fileName);
+                "filename=\"" + fileName + "\"");
+//                fileName);
 
         return outputStream -> {
             int nRead;
             byte[] data = new byte[1024];
-            while ((nRead = resource.read(data, 0, data.length)) != -1) {
-                System.out.println("Writing some bytes..");
+            while ((nRead = resource.read(data)) != -1) {
                 outputStream.write(data, 0, nRead);
             }
         };
@@ -144,16 +153,13 @@ public class Panel {
     private boolean uploadFile(MultipartFile file, Long categoryId, Model model) {
         if (!file.isEmpty()) {
             try {
-                byte[] bytes = file.getBytes();
-                File catalog = new File(STORAGE + "/" + getCurrentUserId() + "/" + categoryId);
-                catalog.mkdirs();
-
-                File endFile = new File(catalog, file.getOriginalFilename());
-
-                BufferedOutputStream bufferedOutputStream =
-                        new BufferedOutputStream(new FileOutputStream(endFile));
-                bufferedOutputStream.write(bytes);
-                bufferedOutputStream.close();
+                java.nio.file.Path path = Paths.get(
+                        STORAGE + "/" + getCurrentUserId() + "/" + categoryId);
+                Files.createDirectories(path);
+                path = path.resolve(file.getOriginalFilename());
+                if (!Files.notExists(path)) Files.delete(path);
+                Files.createFile(path);
+                Files.write(path, file.getBytes(), StandardOpenOption.CREATE);
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -186,7 +192,7 @@ public class Panel {
         for (FileXCloud fileXCloud : filesCurrentCategory) {
             size += fileXCloud.getSize();
         }
-        size = size/1048576;
+        size = size / 1048576;
         return size;
     }
 
@@ -278,7 +284,7 @@ public class Panel {
         return list;
     }
 
-    public static File getFileForBD(FileXCloud fileDB){
+    public static File getFileForBD(FileXCloud fileDB) {
         File file = new File(STORAGE + "/" + fileDB.getUserId()
                 + "/" + fileDB.getParentId() + "/" + fileDB.getName());
         return file;
